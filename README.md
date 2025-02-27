@@ -38,4 +38,59 @@ This project analyzes an **ecommerce dataset** using **SQL & Power BI** to gain 
 - Sales are evenly distributed across regions, meaning marketing efforts should be balanced globally.Top-Selling Product in Each Region: Product 150.
 
 ## Some interesting queries
+```
+average time between purchase
+WITH purchase_gaps AS (
+    SELECT customer_id, transaction_date,
+           LAG(transaction_date) OVER(PARTITION BY customer_id ORDER BY transaction_date) AS prev_purchase
+    FROM synthetic_ecommerce_data
+)
+SELECT ROUND(AVG(DATEDIFF(transaction_date, prev_purchase)), 2) AS avg_days_between_purchases
+FROM purchase_gaps
+WHERE prev_purchase IS NOT NULL;
+```
+```
+the revenue contribution of repeat vs. new customers
+with repea AS (
+SELECT Customer_ID
+,SUM(Revenue) as total
+,CASE WHEN count(*) > 1 THEN 'Repeat' else 'new' END as repeatcus
+FROM synthetic_ecommerce_data
+GROUP BY 1
+)
+SELECT repeatcus,ROUND(SUM(total),2)
+FROM repea
+GROUP BY repeatcus
+ORDER BY repeatcus DESC
+;
+```
+```
+Customer segmentation/total revenue into spend tiers
+WITH customer_spend AS (
+    SELECT customer_id, ROUND(SUM(revenue), 2) AS total_spent
+    FROM synthetic_ecommerce_data 
+    GROUP BY customer_id
+ )
+ SELECT customer_id,
+       total_spent,
+       CASE 
+           WHEN total_spent >= 5000 THEN 'High' 
+           WHEN total_spent BETWEEN 3000 AND 4999 THEN 'Upper intermedite'
+           WHEN total_spent BETWEEN 1000 AND 2999 THEN 'Lowwer intermediate' 
+           ELSE 'Low' 
+       END AS spend_tier
 
+FROM customer_spend
+;
+```
+Customer Purchase Frequency Distribution
+```
+SELECT order_count, COUNT(*) AS customer_count 
+FROM (
+    SELECT customer_id, COUNT(*) AS order_count 
+    FROM synthetic_ecommerce_data 
+    GROUP BY customer_id
+) AS order_frequency
+GROUP BY order_count 
+ORDER BY order_count;
+```
