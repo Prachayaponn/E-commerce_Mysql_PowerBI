@@ -38,8 +38,9 @@ This project analyzes an **ecommerce dataset** using **SQL & Power BI** to gain 
 - Sales are evenly distributed across regions, meaning marketing efforts should be balanced globally.Top-Selling Product in Each Region: Product 150.
 
 ## Some interesting queries
+
+Average time between purchase
 ```
-average time between purchase
 WITH purchase_gaps AS (
     SELECT customer_id, transaction_date,
            LAG(transaction_date) OVER(PARTITION BY customer_id ORDER BY transaction_date) AS prev_purchase
@@ -49,8 +50,8 @@ SELECT ROUND(AVG(DATEDIFF(transaction_date, prev_purchase)), 2) AS avg_days_betw
 FROM purchase_gaps
 WHERE prev_purchase IS NOT NULL;
 ```
+The revenue contribution of repeat vs. new customers
 ```
-the revenue contribution of repeat vs. new customers
 with repea AS (
 SELECT Customer_ID
 ,SUM(Revenue) as total
@@ -64,8 +65,8 @@ GROUP BY repeatcus
 ORDER BY repeatcus DESC
 ;
 ```
-```
 Customer segmentation/total revenue into spend tiers
+```
 WITH customer_spend AS (
     SELECT customer_id, ROUND(SUM(revenue), 2) AS total_spent
     FROM synthetic_ecommerce_data 
