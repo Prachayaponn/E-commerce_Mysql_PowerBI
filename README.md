@@ -2,6 +2,7 @@
 
 ## Project Overview
 This project analyzes an **ecommerce dataset** using **SQL & Power BI** to gain **business insights** into customer behavior, sales performance, and discount impact. The goal is to **optimize pricing strategies, improve customer retention, and identify top-selling products**.
+!()[visualizations/ecom1.JPG]
 
 ## Key Objectives
 - Identify top-selling products, seasonal trends, and peak sales months.
